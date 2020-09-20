@@ -1,7 +1,7 @@
 # This is a basic workflow to help you get started with Actions
 
 name: TLH 
-version : 2
+version :1 
 # 2.1 ne prend pas encore en charge l'exécution locale
 # sauf avec une solution de contournement. Pour plus de simplicité, utilisez-le.
 # https://github.com/CircleCI-Public/circleci-cli/issues/79
@@ -30,7 +30,7 @@ emplois :
               npm exécuter préparer
             Fi
       - persist_to_workspace :
-          racine : .
+          racine : .  ERC20
           chemins :
             - node_modules
             - construire
