@@ -1,0 +1,86 @@
+# This is a basic workflow to help you get started with Actions
+
+name: TLH 
+version : 2
+# 2.1 ne prend pas encore en charge l'exécution locale
+# sauf avec une solution de contournement. Pour plus de simplicité, utilisez-le.
+# https://github.com/CircleCI-Public/circleci-cli/issues/79
+
+alias :
+  - & par défaut
+    docker :
+      - image : circleci / nœud: 10
+
+  - & cache_key_node_modules
+    clé : v1-node_modules - {{checksum "package-lock.json"}}
+
+emplois :
+  dépendances :
+    << : * par défaut
+    étapes :
+      - caisse
+      - restore_cache :
+          << : * cache_key_node_modules
+      - courir :
+          name : installer les dépendances npm et préparer
+          commande : |
+            si [ ! -d modules_noeud]; puis
+              npm ci
+            autre
+              npm exécuter préparer
+            Fi
+      - persist_to_workspace :
+          racine : .
+          chemins :
+            - node_modules
+            - construire
+      - save_cache :
+          chemins :
+            - node_modules
+          << : * cache_key_node_modules
+
+  peluches :
+    << : * par défaut
+    étapes :
+      - caisse
+      - attach_workspace :
+          à : .
+      - courir :
+          nom : Linter
+          commande : npm run lint
+  test :
+    << : * par défaut
+    étapes :
+      - caisse
+      - attach_workspace :
+          à : .
+      - courir :
+          nom : Tests unitaires
+          commande : test d'exécution npm
+
+  couverture :
+    << : * par défaut
+    étapes :
+      - caisse
+      - attach_workspace :
+          à : .
+      - courir :
+          name : Tests unitaires avec rapport de couverture
+          commande : couverture d'exécution npm
+
+      # TODO (xinbenlv, # 1839): exécutez SOLC_NIGHTLY pour être exécuté mais laissez-le échouer.
+
+flux de travail :
+  version : 2
+  tout :
+    emplois :
+      - dépendances
+      - peluche :
+          nécessite :
+            - dépendances
+      - test :
+          nécessite :
+            - dépendances
+      - couverture :
+          nécessite :
+            - dépendances
